@@ -78,6 +78,24 @@ String getBody() {
   page += "<div class=\"main-content\">\n";
 
   page += "</h1>\n";
+  page += "<div id='date-time-server'></div>\n";
+
+  page += "<button onclick='updateClock()' style='font-size: 24px;'><h4>Soatni kurish</h4></button>\n";
+  
+  page += "<h1>San'a va vaqt sozlash</h1>\n";
+  page += "<form action=\"/setdatetime\" method=\"post\" onsubmit=\"return showConfirmation();\">\n";
+  page += "<label for=\"date\">San'a (YYYY-MM-DD):</label>\n";
+  page += "<input type=\"text\" id=\"date\" name=\"date\" required>\n";
+  page += "<label for=\"hours\">Soatlar:</label>\n";
+  page += "<input type=\"number\" id=\"hours\" name=\"hours\" min=\"0\" max=\"23\" step=\"1\" required>\n";
+  page += "<label for=\"minutes\">Daqiqalar:</label>\n";
+  page += "<input type=\"number\" id=\"minutes\" name=\"minutes\" min=\"0\" max=\"59\" step=\"1\" required>\n";
+  page += "<label for=\"seconds\">Soniya:</label>\n";
+  page += "<input type=\"number\" id=\"seconds\" name=\"seconds\" min=\"0\" max=\"59\" step=\"1\" required>\n";
+  page += "<br>\n";
+  page += "<input type=\"submit\" value=\"San'a va vaqt sozlash\">\n";
+  page += "</form>\n";
+
   page += "<h1>Qo'ng'iroq Chalish Jadvalini Kiriting.</h1>\n";
   page += "<form method=\"POST\" id=\"alarm-form\">\n";
   page += "</form>\n";
@@ -121,11 +139,11 @@ String getBody() {
   page += "<label for=\"${i}_len\">Davomiylik.</label>\n";
   page += "<select name=\"${i}_len\" id=\"${i}_len\">\n";
   page += "<option value=\"${len_val}\" selected>${len_val} ${len_val ? \"Soniya\" : \"\"}</option>\n";
+  page += "<option value=\"2\">2 Soniya</option>\n";
+  page += "<option value=\"3\">3 Soniya</option>\n";
+  page += "<option value=\"5\">5 Soniya</option>\n";
   page += "<option value=\"10\">10 Soniya</option>\n";
   page += "<option value=\"30\">30 Soniya</option>\n";
-  page += "<option value=\"60\">1 Daqiqa</option>\n";
-  page += "<option value=\"120\">2 Daqiqa</option>\n";
-  page += "<option value=\"180\">3 Daqiqa</option>\n";
   page += "</select>\n";
   page += "</div>\n";
   page += "\n";
@@ -140,6 +158,39 @@ String getBody() {
   page += "form.innerHTML = form_html;\n";
   page += "}\n";
   page += "init_form();\n";
+
+  page += "function updateClock() {";
+  page += "var xhr = new XMLHttpRequest();\n";
+  page += "xhr.onreadystatechange = function() {";
+  page += "if (xhr.readyState === 4 && xhr.status === 200) {";
+  page += "var currentTime = xhr.responseText;\n";
+  page += "document.getElementById('date-time-server').textContent = currentTime;\n";
+  page += "let [date, time] = currentTime.split(' ');\n";
+  page += "time = time.split(':');\n";
+  page += "document.getElementById('date').value = date;\n";
+  page += "document.getElementById('hours').value = time[0];\n";
+  page += "document.getElementById('minutes').value = time[1];\n";
+  page += "document.getElementById('seconds').value = time[2];\n";
+  page += "}";
+  page += "};\n";
+  page += "xhr.open('GET', '/gettime', true);\n";
+  page += "xhr.send();\n";
+  page += "}";
+  // page += "setInterval(updateClock, 1000);";
+
+  page += "function showConfirmation() {\n";
+  page += "    var confirmation = window.confirm(\"Siz rostan-ham san'a va vaqtni sozlashga ishonchingiz komilmi?\");\n";
+  page += "    if (confirmation) {\n";
+  page += "        // Agar foydalanuvchi \"OK\" tugmasini bosingan bo'lsa, amalni bajarish uchun true qaytariladi\n";
+  page += "        alert(\"San'a va vaqt muvaffaqiyatli sozlandi!\");\n";
+  page += "        return true; // Formani jo'natishni davom ettirish uchun\n";
+  page += "    } else {\n";
+  page += "        // Agar foydalanuvchi \"Bekor qilish\" tugmasini bosingan bo'lsa, amalni bekor qilish uchun false qaytariladi\n";
+  page += "        alert(\"San'a va vaqt sozlanmadi.\");\n";
+  page += "        return false; // Formani jo'natishni bekor qilish uchun\n";
+  page += "    }\n";
+  page += "}\n";
+
   page += "</script>\n";
   
   

@@ -1,6 +1,4 @@
 void saveData() {
-  Serial.println("saveData saveData saveData");
-
   preferences.begin(alarmStorageName, false);
 
   int index = 0;
@@ -9,7 +7,6 @@ void saveData() {
     len = server.arg(i+2).toInt();
     // If len exists and values are changed.
     if(len && (alarmsList[index].hour != server.arg(i).toInt() || alarmsList[index].minute != server.arg(i+1).toInt() || alarmsList[index].len != len)) {
-      Serial.println("Update Update Update");
       alarmsList[index].hour = server.arg(i).toInt();
       alarmsList[index].minute = server.arg(i+1).toInt();
       alarmsList[index].len = len;
@@ -20,7 +17,6 @@ void saveData() {
       preferences.putInt(server.argName(i+2).c_str(), server.arg(i+2).toInt());
     } else if (len == 0 && alarmsList[index].len != 0) {
      // If alarm deleted
-      Serial.println("Delete Delete Delete");
       alarmsList[index].hour = 0;
       alarmsList[index].minute = 0;
       alarmsList[index].len = len;

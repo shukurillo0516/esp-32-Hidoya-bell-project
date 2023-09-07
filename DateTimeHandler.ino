@@ -10,36 +10,38 @@ void initRTC() {
   }
 }
 
+String getCurrentTime() {
+    DateTime now = rtc.now();
+    String formattedTime = String(now.year()) + "-" +
+                          String(now.month()) + "-" +
+                          String(now.day()) + " " +
+                          String(now.hour()) + ":" +
+                          String(now.minute()) + ":" +
+                          String(now.second());
+    return formattedTime;
+}
 
 void printCurrentTime() {
+  Serial.println(getCurrentTime());
+}
+
+int getCurrentSeconds() {
   DateTime now = rtc.now();
-  Serial.print(now.year(), DEC);
-  Serial.print('/');
-  Serial.print(now.month(), DEC);
-  Serial.print('/');
-  Serial.print(now.day(), DEC);
-  Serial.println();
-  Serial.print(now.hour(), DEC);
-  Serial.print(':');
-  Serial.print(now.minute(), DEC);
-  Serial.print(':');
-  Serial.print(now.second(), DEC);
-  Serial.println();
+  return now.second() + now.minute() * 60 + now.hour() * 3600;
 }
 
 void checkRingALarm() {
-  DateTime now = rtc.now();
-  DateTime alarm; 
+  int nowSecs = getCurrentSeconds();
+  int alarmSecs = 0;
   for(short i = 0; i < ALarmActualLen; i++) {
-    if (alarmsList[i].len != 0) {
-      alarm = DateTime(now.year(), now.month(), now.day(), alarmsList[i].hour, alarmsList[i].minute, 0);
-      now = rtc.now();
-      while (now.unixtime() >= alarm.unixtime() && now.unixtime() < (alarm.unixtime() + alarmsList[i].len)) {
-        now = rtc.now();
+    if (alarmsList[i].len != 0) {    
+      alarmSecs = alarmsList[i].hour * 3600 + alarmsList[i].minute * 60;
+      if (nowSecs >= alarmSecs && nowSecs < (alarmSecs + alarmsList[i].len)) {
         digitalWrite(led, LOW);
-        delay(500);
+        delay(alarmsList[i].len * 1000 + 100);
+        nowSecs = getCurrentSeconds();
+        digitalWrite(led, HIGH);
       }
-      digitalWrite(led, HIGH);
     }
   }
 }

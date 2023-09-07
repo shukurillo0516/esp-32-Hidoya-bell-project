@@ -3,13 +3,14 @@
 #include <ESPmDNS.h>
 #include <Preferences.h>
 #include "RTClib.h"
+#include <esp_task_wdt.h>
 
 // Main Loop config
 const short MainLoopDelay = 100;
 
 // WiFi Config
 const char* ssid     = "ESP-32";
-const char* password = "hello_world123!";
+const char* password = "12345678";
 
 IPAddress local_ip(42,42,42,42);
 IPAddress gateway(42,42,42,42);
